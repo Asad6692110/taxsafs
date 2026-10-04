@@ -164,7 +164,7 @@ export const process = [
 // Only genuine client testimonials belong here. Navigation arrows appear automatically once there are two or more.
 export const testimonials = [
   {
-    quote: 'Smart Professional LLC provided outstanding support for audits, bookkeeping, and tax filing. Their professionalism and accuracy helped my business maintain compliance without any financial stress.',
+    quote: 'Smart Ample Financial Services provided outstanding support for audits, bookkeeping, and tax filing. Their professionalism and accuracy helped my business maintain compliance without any financial stress.',
     name: 'Call My Doctor LLC',
     role: 'Client',
   },
