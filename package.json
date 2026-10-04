@@ -1,0 +1,14 @@
+{
+  "name": "smart-ample-financial-services",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Website for Smart Ample Financial Services — static, zero-dependency build.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node build.mjs && node serve.mjs"
+  }
+}
