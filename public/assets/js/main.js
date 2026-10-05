@@ -6,6 +6,30 @@
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---- Visitor ids for first-party analytics (shown in /admin): random, no personal data ---- */
+  const stored = (area, key) => {
+    try {
+      let id = area.getItem(key);
+      if (!id) area.setItem(key, (id = crypto.randomUUID()));
+      return id;
+    } catch {
+      return ''; // storage blocked: this visit isn't counted
+    }
+  };
+  const vid = stored(localStorage, 'smfs_vid');
+  const sid = stored(sessionStorage, 'smfs_sid');
+  if (vid && sid && location.protocol.startsWith('http')) {
+    const view = JSON.stringify({
+      path: location.pathname,
+      ref: document.referrer,
+      utm: new URLSearchParams(location.search).get('utm_source') || '',
+      lang: navigator.language || '',
+      vid,
+      sid,
+    });
+    if (!navigator.sendBeacon?.('/api/track', view)) fetch('/api/track', { method: 'POST', body: view, keepalive: true }).catch(() => {});
+  }
+
   /* ---- Header: translucent once the page scrolls ---- */
   const header = $('[data-header]');
   const onScroll = () => header.classList.toggle('is-scrolled', scrollY > 12);
@@ -229,7 +253,8 @@
       data.service = service.selectedOptions[0].textContent;
       const endpoint = form.dataset.endpoint;
 
-      // With a form endpoint configured, post to it. Otherwise hand off to the visitor's email app.
+      // Post to the form endpoint; the request then shows in /admin. If it can't be reached, or none is
+      // configured, hand off to the visitor's email app so the request is never lost.
       if (endpoint) {
         const button = $('[type="submit"]', form);
         button.disabled = true;
@@ -238,17 +263,17 @@
           const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ ...data, vid }),
           });
           if (!res.ok) throw new Error(res.statusText);
           form.reset();
           setStatus('Thank you. Your request has been received — our team will be in touch shortly.');
+          return;
         } catch {
-          setStatus('Sorry, something went wrong. Please call or email us directly.', true);
+          // fall through to email
         } finally {
           button.disabled = false;
         }
-        return;
       }
 
       const body = [

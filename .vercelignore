@@ -1,5 +1,6 @@
 refference-images/
 dist/
+.data/
 node_modules/
 .netlify/
 serve.mjs

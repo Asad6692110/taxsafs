@@ -26,6 +26,21 @@ The site to publish is the **`dist/` folder**, not the project root (the root ha
 | Cloudflare Pages / Render / others | Build command `npm run build`, output directory `dist`, framework preset "None" |
 | cPanel / shared hosting / GitHub Pages | Run `npm run build`, upload the *contents* of `dist/` |
 
+## Admin panel
+
+`/admin` shows every consultation request sent through the contact form, the site's visitors and its traffic (page views, top pages, sources, countries, devices). It is a static page (`public/admin`) backed by three API routes in `api/`, which Vercel deploys as serverless functions and `npm start` runs locally.
+
+**Local preview:** `npm start`, open http://localhost:3000/admin and sign in with `smartamplefs@gmail.com` / `admin123`. Data is kept in `.data/` (git-ignored); delete that folder to start empty. The preview password only works on your own machine.
+
+**Going live on Vercel** needs two things, both under the project's Settings:
+
+1. *Environment Variables* — `ADMIN_PASSWORD` (long and unique; sign-in is disabled without it) and, optionally, `ADMIN_USER` to sign in with a different email (default `smartamplefs@gmail.com`).
+2. *Storage* — add the **Upstash Redis** integration. It sets `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which is where enquiries and page views are stored. Redeploy afterwards.
+
+Until the database is connected, the contact form falls back to opening the visitor's email app, as before, so no request is lost. Other hosts (Netlify, cPanel) serve the site but not `api/`, so the admin panel only works on Vercel.
+
+**What is recorded:** one entry per page view — page, referring site, country/city (from Vercel), device, browser and a random visitor id kept in the browser's local storage. IP addresses are not stored, known bots are ignored, and page views are deleted after 400 days. Mention this in the privacy policy once it exists.
+
 ## SEO and performance
 
 The build handles these automatically — nothing to maintain by hand:
@@ -47,7 +62,9 @@ The build handles these automatically — nothing to maintain by hand:
 | `src/components.mjs` | Shared sections: page hero, stats, principles, timeline, CTA |
 | `src/pages/*.mjs` | One file per page (insights also generates the article pages) |
 | `public/assets/css/styles.css` | Design system — tokens at the top |
-| `public/assets/js/main.js` | Interactions (no libraries) |
+| `public/assets/js/main.js` | Interactions (no libraries), contact form, page-view tracking |
+| `public/admin/` | Admin panel (page, styles, script) |
+| `api/` | `lead` (contact form), `track` (page views), `admin` (sign-in and panel data); shared code in `api/_lib` |
 | `public/assets/img/` | Photography |
 | `refference-images/` | Screenshots of the previous site, used as the content source |
 
@@ -62,7 +79,7 @@ Edit `src/` or `public/`, then rebuild. Don't edit `dist/` — it is regenerated
 
 ## Before going live
 
-- **Contact form** — no backend is connected. Until one is, submitting opens the visitor's email app with the request pre-filled, addressed to `site.formEmail` in `src/data.mjs` (smartamplefs@gmail.com). To post to a form service or API instead, set `data-endpoint` on the form in `src/pages/contact.mjs`; it receives the fields as JSON.
+- **Contact form and admin panel** — the form posts to `/api/lead` and the request appears in `/admin`. This needs the two Vercel settings under "Admin panel" above. If the request can't be saved, the form opens the visitor's email app with the request pre-filled, addressed to `site.formEmail` in `src/data.mjs` (smartamplefs@gmail.com).
 - **Social links** — dummy links to each platform's home page in `src/data.mjs`.
 - **Privacy / Terms** — footer links are placeholders (`#`) in `src/layout.mjs`; no policy pages exist yet.
 - **Phone / WhatsApp** — one number, +971 54 599 5623 (`phone`, `phoneHref`, `whatsapp`, `whatsappDisplay` in `src/data.mjs`).

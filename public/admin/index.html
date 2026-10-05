@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin | Smart Ample Financial Services</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#060A14">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+<!-- Sign in -->
+<main class="login" id="login" hidden>
+  <form class="login__card" id="login-form" novalidate>
+    <p class="brand"><span class="brand__mark">SMFS</span> Admin</p>
+    <h1>Sign in</h1>
+    <p class="muted">Enquiries, visitors and website traffic for Smart Ample Financial Services.</p>
+    <label class="input">
+      <span>Email</span>
+      <input name="user" type="email" autocomplete="username" autocapitalize="none" required>
+    </label>
+    <label class="input">
+      <span>Password</span>
+      <input name="password" type="password" autocomplete="current-password" required>
+    </label>
+    <button class="btn btn--primary" type="submit">Sign in</button>
+    <p class="login__error" role="alert" id="login-error"></p>
+  </form>
+</main>
+
+<!-- Panel -->
+<div class="app" id="app" hidden>
+  <aside class="side">
+    <p class="brand"><span class="brand__mark">SMFS</span> Admin</p>
+    <nav class="side__nav" aria-label="Admin sections">
+      <button type="button" data-view="overview" aria-current="page">Overview</button>
+      <button type="button" data-view="enquiries">Enquiries <span class="badge" id="new-count" hidden></span></button>
+      <button type="button" data-view="visitors">Visitors</button>
+      <button type="button" data-view="traffic">Traffic</button>
+    </nav>
+    <div class="side__foot">
+      <a href="/" target="_blank" rel="noopener">View website</a>
+      <button type="button" data-action="logout">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div>
+        <h1 id="view-title">Overview</h1>
+        <p class="muted" id="view-sub"></p>
+      </div>
+      <div class="top__tools">
+        <div class="seg" role="group" aria-label="Period">
+          <button type="button" data-days="7">7 days</button>
+          <button type="button" data-days="30" aria-pressed="true">30 days</button>
+          <button type="button" data-days="90">90 days</button>
+        </div>
+        <button class="btn" type="button" data-action="refresh">Refresh</button>
+      </div>
+    </header>
+    <p class="notice" id="notice" role="status" hidden></p>
+    <div id="view"></div>
+  </main>
+</div>
+
+<!-- Detail drawer -->
+<div class="drawer" id="drawer" hidden>
+  <div class="drawer__shade" data-action="close-drawer"></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <header class="drawer__head">
+      <h2 id="drawer-title"></h2>
+      <button class="btn btn--sm" type="button" data-action="close-drawer">Close</button>
+    </header>
+    <div class="drawer__body" id="drawer-body"></div>
+  </aside>
+</div>
+
+<div class="tip" id="tip" hidden></div>
+<script src="/admin/admin.js" defer></script>
+</body>
+</html>

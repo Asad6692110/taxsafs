@@ -1,4 +1,5 @@
 // Zero-dependency local preview server for dist/, with the same clean URLs as production (/about -> about.html).
+// It also runs the API routes in api/ (contact form, analytics, admin panel), storing their data in .data/.
 // Usage: node serve.mjs [port]   (or `npm start`, which builds first)
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -25,6 +26,10 @@ const types = {
 
 const isFile = (file) => stat(file).then((s) => s.isFile(), () => false);
 
+// The same handlers Vercel deploys as serverless functions.
+const api = {};
+for (const name of ['track', 'lead', 'admin']) api[name] = (await import(`./api/${name}.mjs`)).default;
+
 createServer(async (req, res) => {
   const send = async (status, file) => {
     const type = types[extname(file)] || 'application/octet-stream';
@@ -36,6 +41,10 @@ createServer(async (req, res) => {
   };
   try {
     const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname).replace(/\/$/, '');
+    if (path.startsWith('/api/')) {
+      const handler = api[path.slice(5)];
+      if (handler) return await handler(req, res);
+    }
     const base = normalize(join(root, path));
     if (base !== root && !base.startsWith(root + sep)) throw new Error('outside root');
     for (const file of [`${base}.html`, base, join(base, 'index.html')]) {
@@ -46,4 +55,4 @@ createServer(async (req, res) => {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Not found');
   }
-}).listen(port, '127.0.0.1', () => console.log(`Smart Ample Financial Services -> http://localhost:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`Smart Ample Financial Services -> http://localhost:${port}  (admin: /admin)`));

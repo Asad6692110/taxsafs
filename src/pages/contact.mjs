@@ -49,7 +49,7 @@ export default {
         </div>
       </div>
 
-      <form class="form" id="consultation" action="mailto:${site.formEmail}" method="post" enctype="text/plain" novalidate data-form data-endpoint="" data-mailto="${site.formEmail}">
+      <form class="form" id="consultation" action="mailto:${site.formEmail}" method="post" enctype="text/plain" novalidate data-form data-endpoint="/api/lead" data-mailto="${site.formEmail}">
         <h2 class="form__title">Request your free consultation</h2>
         <p class="form__hint">Speak with our qualified professionals about your accounting, taxation, and compliance requirements — with no obligation.</p>
 
@@ -84,6 +84,10 @@ export default {
         <div class="field">
           <label for="f-message">Message <span>Optional</span></label>
           <textarea id="f-message" name="message" rows="5"></textarea>
+        </div>
+        <div class="field" style="display:none" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
         </div>
         <label class="check">
           <input type="checkbox" name="consent" required>

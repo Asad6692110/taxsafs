@@ -63,7 +63,7 @@ await writeFile(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?
 ${indexable.map((p) => `  <url><loc>${pageUrl(p.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `);
-await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
+await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${site.url}/sitemap.xml\n`);
 await writeFile(join(out, 'site.webmanifest'), JSON.stringify({
   name: site.name,
   short_name: site.shortName,
